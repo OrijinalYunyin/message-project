@@ -45,7 +45,7 @@ int main()
     }
     else
     {
-        mq::context_t context{1};
+        zmq::context_t context{1};
 
         // construct a REQ (request) socket and connect to interface
         zmq::socket_t socket{context, zmq::socket_type::req};
