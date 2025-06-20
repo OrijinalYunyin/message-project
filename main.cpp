@@ -16,11 +16,6 @@ int main()
 
     std::cin >> x;
 
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-    std::string message;
-    std::getline(std::cin, message);
-
     if (1 == x)
     {
         // initialize the zmq context with a single IO thread
@@ -48,16 +43,20 @@ int main()
             socket.send(zmq::buffer(data), zmq::send_flags::none);
         }
     }
-
+    else
     {
         mq::context_t context{1};
 
         // construct a REQ (request) socket and connect to interface
         zmq::socket_t socket{context, zmq::socket_type::req};
-        socket.connect("tcp://localhost:5555");
+        socket.connect("tcp://51.195.118.2:5555");
 
         // set up some static data to send
-        const std::string data{"Hello"};
+        std::string data;
+
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        std::getline(std::cin, data);
 
         for (auto request_num = 0; request_num < 10; ++request_num)
         {
@@ -65,12 +64,6 @@ int main()
             std::cout << "Sending Hello " << request_num << "..." << std::endl;
             socket.send(zmq::buffer(data), zmq::send_flags::none);
 
-            // wait for reply from server
-            zmq::message_t reply{};
-            socket.recv(reply, zmq::recv_flags::none);
-
-            std::cout << "Received " << reply.to_string();
-            std::cout << " (" << request_num << ")";
             std::cout << std::endl;
         }
 
